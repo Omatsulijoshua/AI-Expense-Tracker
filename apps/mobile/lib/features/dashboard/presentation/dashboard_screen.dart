@@ -17,6 +17,14 @@ class DashboardScreen extends ConsumerWidget {
         title: const Text('Expense Tracker'),
         actions: [
           IconButton(
+            icon: const Icon(Icons.search),
+            onPressed: () => context.push('/search'),
+          ),
+          IconButton(
+            icon: const Icon(Icons.analytics_outlined),
+            onPressed: () => context.push('/analytics'),
+          ),
+          IconButton(
             icon: const Icon(Icons.account_balance_outlined),
             onPressed: () => context.push('/accounts'),
           ),
@@ -89,9 +97,9 @@ class DashboardScreen extends ConsumerWidget {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 _buildActionButton(theme, icon: Icons.add, label: 'Add Entry', onTap: () => context.push('/add-transaction')),
+                _buildActionButton(theme, icon: Icons.analytics_outlined, label: 'Analytics', onTap: () => context.push('/analytics')),
+                _buildActionButton(theme, icon: Icons.search, label: 'Search', onTap: () => context.push('/search')),
                 _buildActionButton(theme, icon: Icons.account_balance, label: 'Accounts', onTap: () => context.push('/accounts')),
-                _buildActionButton(theme, icon: Icons.history, label: 'Timeline', onTap: () => context.push('/timeline')),
-                _buildActionButton(theme, icon: Icons.swap_horiz, label: 'Transfer', onTap: () => context.push('/add-transaction')),
               ],
             ),
             const SizedBox(height: 24),
