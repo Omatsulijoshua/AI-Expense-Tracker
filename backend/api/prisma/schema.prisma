@@ -1,0 +1,375 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  OWNER
+  ADMIN
+  ACCOUNTANT
+  MEMBER
+  VIEWER
+}
+
+enum AccountType {
+  BANK_ACCOUNT
+  CASH_WALLET
+  DEBIT_CARD
+  CREDIT_CARD
+  SAVINGS_ACCOUNT
+  INVESTMENT_ACCOUNT
+  MOBILE_WALLET
+  BUSINESS_ACCOUNT
+  OTHER
+}
+
+enum TransactionType {
+  INCOME
+  EXPENSE
+  TRANSFER
+}
+
+enum TransactionSource {
+  MANUAL
+  API
+  VOICE
+  IMAGE
+  IMPORT
+  SYSTEM
+}
+
+enum BillStatus {
+  UPCOMING
+  DUE_TODAY
+  OVERDUE
+  PAID
+}
+
+enum WorkspaceType {
+  PERSONAL
+  BUSINESS
+  FAMILY
+}
+
+model User {
+  id               String            @id @default(uuid())
+  name             String
+  email            String            @unique
+  phone            String?
+  country          String            @default("Nigeria")
+  currency         String            @default("NGN")
+  timezone         String            @default("Africa/Lagos")
+  locale           String            @default("en_NG")
+  avatar           String?
+  passwordHash     String
+  isEmailVerified  Boolean           @default(false)
+  twoFactorEnabled Boolean           @default(false)
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+
+  sessions         Session[]
+  memberships      WorkspaceMember[]
+  accounts         Account[]
+  transactions     Transaction[]
+  categories       Category[]
+  budgets          Budget[]
+  bills            Bill[]
+  savingsGoals     SavingsGoal[]
+  debts            Debt[]
+  documents        Document[]
+  notifications    Notification[]
+  auditLogs        AuditLog[]
+
+  @@map("users")
+}
+
+model Session {
+  id           String   @id @default(uuid())
+  userId       String
+  refreshToken String   @unique
+  deviceInfo   String?
+  ipAddress    String?
+  isValid      Boolean  @default(true)
+  expiresAt    DateTime
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model Workspace {
+  id          String            @id @default(uuid())
+  name        String
+  type        WorkspaceType     @default(PERSONAL)
+  currency    String            @default("NGN")
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  members     WorkspaceMember[]
+  accounts    Account[]
+  transactions Transaction[]
+  budgets     Budget[]
+
+  @@map("workspaces")
+}
+
+model WorkspaceMember {
+  id          String    @id @default(uuid())
+  workspaceId String
+  userId      String
+  role        Role      @default(MEMBER)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([workspaceId, userId])
+  @@map("workspace_members")
+}
+
+model Account {
+  id               String      @id @default(uuid())
+  userId           String
+  workspaceId      String
+  name             String
+  type             AccountType
+  institution      String?
+  currency         String      @default("NGN")
+  openingBalance   Decimal     @default(0.0000) @db.Decimal(20, 4)
+  currentBalance   Decimal     @default(0.0000) @db.Decimal(20, 4)
+  availableBalance Decimal     @default(0.0000) @db.Decimal(20, 4)
+  isActive         Boolean     @default(true)
+  isConnected      Boolean     @default(false)
+  providerId       String?
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+
+  user             User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workspace        Workspace   @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  transactions     Transaction[]
+
+  @@index([userId, workspaceId])
+  @@map("accounts")
+}
+
+model Category {
+  id          String        @id @default(uuid())
+  userId      String?
+  name        String
+  type        TransactionType
+  icon        String?
+  color       String?
+  parentId    String?
+  isSystem    Boolean       @default(false)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  user        User?         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  parent      Category?     @relation("CategorySubcategories", fields: [parentId], references: [id])
+  subcategories Category[]  @relation("CategorySubcategories")
+  transactions Transaction[]
+  budgetDetails BudgetCategory[]
+
+  @@map("categories")
+}
+
+model Transaction {
+  id                    String            @id @default(uuid())
+  userId                String
+  workspaceId           String
+  accountId             String
+  type                  TransactionType
+  amount                Decimal           @db.Decimal(20, 4)
+  currency              String            @default("NGN")
+  categoryId            String?
+  merchant              String?
+  description           String?
+  transactionDate       DateTime
+  paymentMethod         String?
+  reference             String?
+  externalTransactionId String?           @unique
+  source                TransactionSource @default(MANUAL)
+  status                String            @default("COMPLETED")
+  aiConfidence          Float?
+  notes                 String?
+  location              String?
+  createdAt             DateTime          @default(now())
+  updatedAt             DateTime          @updatedAt
+
+  user                  User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workspace             Workspace         @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  account               Account           @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  category              Category?         @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+
+  sourceTransfer        TransactionTransfer? @relation("SourceTransfer")
+  destTransfer          TransactionTransfer? @relation("DestTransfer")
+
+  @@index([userId, workspaceId, transactionDate])
+  @@index([accountId, transactionDate])
+  @@map("transactions")
+}
+
+model TransactionTransfer {
+  id                     String      @id @default(uuid())
+  sourceTransactionId      String      @unique
+  destinationTransactionId String      @unique
+  createdAt              DateTime    @default(now())
+
+  sourceTransaction      Transaction @relation("SourceTransfer", fields: [sourceTransactionId], references: [id], onDelete: Cascade)
+  destinationTransaction Transaction @relation("DestTransfer", fields: [destinationTransactionId], references: [id], onDelete: Cascade)
+
+  @@map("transaction_transfers")
+}
+
+model Budget {
+  id          String           @id @default(uuid())
+  userId      String
+  workspaceId String
+  name        String
+  amount      Decimal          @db.Decimal(20, 4)
+  startDate   DateTime
+  endDate     DateTime
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  user        User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workspace   Workspace        @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  categories  BudgetCategory[]
+
+  @@map("budgets")
+}
+
+model BudgetCategory {
+  id         String   @id @default(uuid())
+  budgetId   String
+  categoryId String
+  allocated  Decimal  @db.Decimal(20, 4)
+
+  budget     Budget   @relation(fields: [budgetId], references: [id], onDelete: Cascade)
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@unique([budgetId, categoryId])
+  @@map("budget_categories")
+}
+
+model Bill {
+  id          String     @id @default(uuid())
+  userId      String
+  name        String
+  amount      Decimal    @db.Decimal(20, 4)
+  dueDate     DateTime
+  frequency   String
+  status      BillStatus @default(UPCOMING)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("bills")
+}
+
+model SavingsGoal {
+  id            String   @id @default(uuid())
+  userId        String
+  name          String
+  targetAmount  Decimal  @db.Decimal(20, 4)
+  currentAmount Decimal  @default(0.0000) @db.Decimal(20, 4)
+  targetDate    DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("savings_goals")
+}
+
+model Debt {
+  id           String        @id @default(uuid())
+  userId       String
+  person       String
+  type         String        // "I_OWE" or "OWED_TO_ME"
+  amount       Decimal       @db.Decimal(20, 4)
+  remaining    Decimal       @db.Decimal(20, 4)
+  dueDate      DateTime?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  payments     DebtPayment[]
+
+  @@map("debts")
+}
+
+model DebtPayment {
+  id        String   @id @default(uuid())
+  debtId    String
+  amount    Decimal  @db.Decimal(20, 4)
+  paidAt    DateTime @default(now())
+
+  debt      Debt     @relation(fields: [debtId], references: [id], onDelete: Cascade)
+
+  @@map("debt_payments")
+}
+
+model Document {
+  id          String               @id @default(uuid())
+  userId      String
+  filename    String
+  fileUrl     String
+  mimeType    String
+  fileSize    Int
+  createdAt   DateTime             @default(now())
+  updatedAt   DateTime             @updatedAt
+
+  user        User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  extractions DocumentExtraction[]
+
+  @@map("documents")
+}
+
+model DocumentExtraction {
+  id          String   @id @default(uuid())
+  documentId  String
+  extractedJson String
+  confidence  Float
+  createdAt   DateTime @default(now())
+
+  document    Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@map("document_extractions")
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String
+  title     String
+  message   String
+  type      String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("notifications")
+}
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  actorId   String?
+  action    String
+  entity    String
+  entityId  String?
+  metadata  String?
+  createdAt DateTime @default(now())
+
+  actor     User?    @relation(fields: [actorId], references: [id], onDelete: SetNull)
+
+  @@map("audit_logs")
+}
