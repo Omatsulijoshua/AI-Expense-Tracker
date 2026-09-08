@@ -12,6 +12,7 @@ import { BillsModule } from './bills/bills.module';
 import { GoalsModule } from './goals/goals.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { ImportsModule } from './imports/imports.module';
+import { IntegrationsModule } from './integrations/integrations.module';
 import { PrismaModule } from './prisma/prisma.module';
 
 @Module({
@@ -33,6 +34,7 @@ import { PrismaModule } from './prisma/prisma.module';
     GoalsModule,
     NotificationsModule,
     ImportsModule,
+    IntegrationsModule,
   ],
 })
 export class AppModule {}

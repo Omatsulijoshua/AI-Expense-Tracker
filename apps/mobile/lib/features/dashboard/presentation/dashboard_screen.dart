@@ -18,6 +18,11 @@ class DashboardScreen extends ConsumerWidget {
         title: const Text('Expense Tracker'),
         actions: [
           IconButton(
+            icon: const Icon(Icons.hub_outlined),
+            tooltip: 'Bank Connections',
+            onPressed: () => context.push('/integrations'),
+          ),
+          IconButton(
             icon: const Icon(Icons.file_upload_outlined),
             tooltip: 'Import CSV',
             onPressed: () => context.push('/import'),

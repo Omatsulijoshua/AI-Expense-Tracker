@@ -8,7 +8,7 @@
 | **Phase 4** | Dashboard & Analytics | **PASSED** | Dashboard cards, cash flow charts, structured search, filters, reports. |
 | **Phase 5** | Budgets / Bills / Goals | **PASSED** | Monthly/weekly budgets, alerts, bill calendar, recurring transactions, savings goals. |
 | **Phase 6** | Import & Offline | **PASSED** | Statement CSV import, dynamic column mapper, duplicate detection engine, offline queue & background sync. |
-| **Phase 7** | Financial API Connections | NOT STARTED | Provider abstraction, bank account sync, webhooks, rate limiting. |
+| **Phase 7** | Financial API Connections | **PASSED** | Provider abstraction layer, mock/sandbox bank adapters, token exchange, webhook engine, manual & background bank sync. |
 | **Phase 8** | Receipt / Document AI | NOT STARTED | Vision OCR pipeline, receipt analysis, confirmation UI, document vault. |
 | **Phase 9** | Voice Entry | NOT STARTED | Speech-to-text, transaction intent extraction, voice income/expense/transfer. |
 | **Phase 10** | AI Financial Assistant | NOT STARTED | Natural language chat, backend tool calling, financial querying. |
