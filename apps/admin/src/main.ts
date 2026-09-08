@@ -36,6 +36,7 @@ interface AuditLog {
 // Mock State for Admin Frontend Console
 const state = {
   activeTab: 'overview',
+  searchQuery: '',
   users: [
     { id: 'usr-101', name: 'Joshua Omatsuli', email: 'joshua@expensetracker.ai', currency: 'NGN', isLocked: false, accountsCount: 4, transactionsCount: 128, createdAt: '2026-01-15' },
     { id: 'usr-102', name: 'Sarah Connor', email: 'sarah@skynet.org', currency: 'USD', isLocked: false, accountsCount: 2, transactionsCount: 45, createdAt: '2026-02-01' },
@@ -77,6 +78,14 @@ function renderApp() {
   const totalUsers = state.users.length;
   const lockedUsers = state.users.filter(u => u.isLocked).length;
 
+  const filteredUsers = state.searchQuery
+    ? state.users.filter(
+        u =>
+          u.name.toLowerCase().includes(state.searchQuery.toLowerCase()) ||
+          u.email.toLowerCase().includes(state.searchQuery.toLowerCase())
+      )
+    : state.users;
+
   container.innerHTML = `
     <!-- STATS SUMMARY CARDS -->
     <div class="stats-grid">
@@ -109,26 +118,28 @@ function renderApp() {
           <span>System Infrastructure Operational Status</span>
           <span class="status-badge operational">All Systems Green</span>
         </div>
-        <table>
-          <thead>
-            <tr>
-              <th>Service / Subsystem</th>
-              <th>Status</th>
-              <th>Latency</th>
-              <th>Last Checked</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${state.providers.map(p => `
+        <div class="table-responsive">
+          <table>
+            <thead>
               <tr>
-                <td><strong>${p.name}</strong></td>
-                <td><span class="btn ${p.status === 'ONLINE' ? 'btn-success' : 'btn-action'}">${p.status}</span></td>
-                <td>${p.latencyMs} ms</td>
-                <td>${p.lastSyncAt}</td>
+                <th>Service / Subsystem</th>
+                <th>Status</th>
+                <th>Latency</th>
+                <th>Last Checked</th>
               </tr>
-            `).join('')}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              ${state.providers.map(p => `
+                <tr>
+                  <td><strong>${p.name}</strong></td>
+                  <td><span class="btn ${p.status === 'ONLINE' ? 'btn-success' : 'btn-action'}">${p.status}</span></td>
+                  <td>${p.latencyMs} ms</td>
+                  <td>${p.lastSyncAt}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
 
@@ -137,42 +148,44 @@ function renderApp() {
       <div class="card-panel">
         <div class="card-title">
           <span>User Accounts Management</span>
-          <input type="text" class="search-bar" placeholder="Search user name or email..." oninput="handleUserSearch(this.value)">
+          <input type="text" class="search-bar" value="${state.searchQuery}" placeholder="Search user name or email..." oninput="handleUserSearch(this.value)">
         </div>
-        <table>
-          <thead>
-            <tr>
-              <th>User Name</th>
-              <th>Email</th>
-              <th>Currency</th>
-              <th>Accounts</th>
-              <th>Transactions</th>
-              <th>Status</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${state.users.map(u => `
+        <div class="table-responsive">
+          <table>
+            <thead>
               <tr>
-                <td><strong>${u.name}</strong></td>
-                <td>${u.email}</td>
-                <td>${u.currency}</td>
-                <td>${u.accountsCount}</td>
-                <td>${u.transactionsCount}</td>
-                <td>
-                  <span class="btn ${u.isLocked ? 'btn-danger' : 'btn-success'}">
-                    ${u.isLocked ? 'LOCKED' : 'ACTIVE'}
-                  </span>
-                </td>
-                <td>
-                  <button class="btn btn-action" onclick="toggleUserLock('${u.id}')">
-                    ${u.isLocked ? 'Unlock User' : 'Lock User'}
-                  </button>
-                </td>
+                <th>User Name</th>
+                <th>Email</th>
+                <th>Currency</th>
+                <th>Accounts</th>
+                <th>Transactions</th>
+                <th>Status</th>
+                <th>Action</th>
               </tr>
-            `).join('')}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              ${filteredUsers.map(u => `
+                <tr>
+                  <td><strong>${u.name}</strong></td>
+                  <td>${u.email}</td>
+                  <td>${u.currency}</td>
+                  <td>${u.accountsCount}</td>
+                  <td>${u.transactionsCount}</td>
+                  <td>
+                    <span class="btn ${u.isLocked ? 'btn-danger' : 'btn-success'}">
+                      ${u.isLocked ? 'LOCKED' : 'ACTIVE'}
+                    </span>
+                  </td>
+                  <td>
+                    <button class="btn btn-action" onclick="toggleUserLock('${u.id}')">
+                      ${u.isLocked ? 'Unlock User' : 'Lock User'}
+                    </button>
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
 
@@ -180,7 +193,7 @@ function renderApp() {
     <div class="tab-content ${state.activeTab === 'providers' ? 'active' : ''}">
       <div class="card-panel">
         <div class="card-title">Open Banking & API Providers Diagnostics</div>
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px;">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px;">
           ${state.providers.map(p => `
             <div style="background: var(--bg-primary); padding: 16px; border-radius: 8px; border: 1px solid var(--border-color);">
               <h4 style="color: var(--accent-blue); margin-bottom: 8px;">${p.name}</h4>
@@ -197,26 +210,28 @@ function renderApp() {
     <div class="tab-content ${state.activeTab === 'ai-metrics' ? 'active' : ''}">
       <div class="card-panel">
         <div class="card-title">AI Token Usage & API Cost Metrics</div>
-        <table>
-          <thead>
-            <tr>
-              <th>AI Model Feature</th>
-              <th>Invocations Count</th>
-              <th>Estimated Tokens Consumed</th>
-              <th>Estimated API Cost (USD)</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${state.aiMetrics.breakdown.map(b => `
+        <div class="table-responsive">
+          <table>
+            <thead>
               <tr>
-                <td><strong>${b.feature}</strong></td>
-                <td>${b.usageCount} calls</td>
-                <td>${b.estimatedTokens.toLocaleString()} tokens</td>
-                <td>$${b.estimatedCostUsd.toFixed(4)}</td>
+                <th>AI Model Feature</th>
+                <th>Invocations Count</th>
+                <th>Estimated Tokens Consumed</th>
+                <th>Estimated API Cost (USD)</th>
               </tr>
-            `).join('')}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              ${state.aiMetrics.breakdown.map(b => `
+                <tr>
+                  <td><strong>${b.feature}</strong></td>
+                  <td>${b.usageCount} calls</td>
+                  <td>${b.estimatedTokens.toLocaleString()} tokens</td>
+                  <td>$${b.estimatedCostUsd.toFixed(4)}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
 
@@ -224,30 +239,32 @@ function renderApp() {
     <div class="tab-content ${state.activeTab === 'audit-logs' ? 'active' : ''}">
       <div class="card-panel">
         <div class="card-title">Platform Audit Trail</div>
-        <table>
-          <thead>
-            <tr>
-              <th>Timestamp</th>
-              <th>Actor</th>
-              <th>Action</th>
-              <th>Entity Type</th>
-              <th>Entity ID</th>
-              <th>Metadata</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${state.auditLogs.map(l => `
+        <div class="table-responsive">
+          <table>
+            <thead>
               <tr>
-                <td>${l.createdAt}</td>
-                <td><strong>${l.actorEmail}</strong></td>
-                <td><span style="color: var(--accent-blue); font-weight: 600;">${l.action}</span></td>
-                <td>${l.entity}</td>
-                <td><code>${l.entityId}</code></td>
-                <td><div class="json-viewer">${l.metadata}</div></td>
+                <th>Timestamp</th>
+                <th>Actor</th>
+                <th>Action</th>
+                <th>Entity Type</th>
+                <th>Entity ID</th>
+                <th>Metadata</th>
               </tr>
-            `).join('')}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              ${state.auditLogs.map(l => `
+                <tr>
+                  <td>${l.createdAt}</td>
+                  <td><strong>${l.actorEmail}</strong></td>
+                  <td><span style="color: var(--accent-blue); font-weight: 600;">${l.action}</span></td>
+                  <td>${l.entity}</td>
+                  <td><code>${l.entityId}</code></td>
+                  <td><div class="json-viewer">${l.metadata}</div></td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   `;
@@ -270,7 +287,24 @@ function renderApp() {
   const titleEl = document.getElementById('page-title');
   if (titleEl) titleEl.textContent = titleMap[tabName] || 'Admin Console';
 
+  // Auto-close sidebar on mobile after selecting tab
+  (window as any).toggleMobileSidebar(false);
+
   renderApp();
+};
+
+(window as any).toggleMobileSidebar = (open: boolean) => {
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('sidebar-overlay');
+  if (sidebar && overlay) {
+    if (open) {
+      sidebar.classList.add('open');
+      overlay.classList.add('open');
+    } else {
+      sidebar.classList.remove('open');
+      overlay.classList.remove('open');
+    }
+  }
 };
 
 (window as any).toggleUserLock = (userId: string) => {
@@ -291,7 +325,7 @@ function renderApp() {
 };
 
 (window as any).handleUserSearch = (query: string) => {
-  // Client-side filtering visual
+  state.searchQuery = query;
   renderApp();
 };
 
