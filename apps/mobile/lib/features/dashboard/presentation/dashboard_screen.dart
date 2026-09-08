@@ -18,6 +18,11 @@ class DashboardScreen extends ConsumerWidget {
         title: const Text('Expense Tracker'),
         actions: [
           IconButton(
+            icon: const Icon(Icons.qr_code_scanner),
+            tooltip: 'Scan Receipt',
+            onPressed: () => context.push('/receipt-scan'),
+          ),
+          IconButton(
             icon: const Icon(Icons.hub_outlined),
             tooltip: 'Bank Connections',
             onPressed: () => context.push('/integrations'),
@@ -112,9 +117,9 @@ class DashboardScreen extends ConsumerWidget {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 _buildActionButton(theme, icon: Icons.add, label: 'Add Entry', onTap: () => context.push('/add-transaction')),
+                _buildActionButton(theme, icon: Icons.qr_code_scanner, label: 'Scan Receipt', onTap: () => context.push('/receipt-scan')),
+                _buildActionButton(theme, icon: Icons.folder_shared_outlined, label: 'Vault', onTap: () => context.push('/documents')),
                 _buildActionButton(theme, icon: Icons.file_upload_outlined, label: 'Import CSV', onTap: () => context.push('/import')),
-                _buildActionButton(theme, icon: Icons.analytics_outlined, label: 'Analytics', onTap: () => context.push('/analytics')),
-                _buildActionButton(theme, icon: Icons.account_balance, label: 'Accounts', onTap: () => context.push('/accounts')),
               ],
             ),
             const SizedBox(height: 12),
