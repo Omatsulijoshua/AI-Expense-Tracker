@@ -7,6 +7,10 @@ import { CategoriesModule } from './categories/categories.module';
 import { AccountsModule } from './accounts/accounts.module';
 import { TransactionsModule } from './transactions/transactions.module';
 import { ReportsModule } from './reports/reports.module';
+import { BudgetsModule } from './budgets/budgets.module';
+import { BillsModule } from './bills/bills.module';
+import { GoalsModule } from './goals/goals.module';
+import { NotificationsModule } from './notifications/notifications.module';
 import { PrismaModule } from './prisma/prisma.module';
 
 @Module({
@@ -23,6 +27,10 @@ import { PrismaModule } from './prisma/prisma.module';
     AccountsModule,
     TransactionsModule,
     ReportsModule,
+    BudgetsModule,
+    BillsModule,
+    GoalsModule,
+    NotificationsModule,
   ],
 })
 export class AppModule {}

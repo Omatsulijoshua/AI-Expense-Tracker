@@ -102,6 +102,16 @@ class DashboardScreen extends ConsumerWidget {
                 _buildActionButton(theme, icon: Icons.account_balance, label: 'Accounts', onTap: () => context.push('/accounts')),
               ],
             ),
+            const SizedBox(height: 12),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _buildActionButton(theme, icon: Icons.pie_chart_outline, label: 'Budgets', onTap: () => context.push('/budgets')),
+                _buildActionButton(theme, icon: Icons.receipt_long_outlined, label: 'Bills', onTap: () => context.push('/bills')),
+                _buildActionButton(theme, icon: Icons.savings_outlined, label: 'Goals', onTap: () => context.push('/goals')),
+                _buildActionButton(theme, icon: Icons.history, label: 'Timeline', onTap: () => context.push('/timeline')),
+              ],
+            ),
             const SizedBox(height: 24),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,

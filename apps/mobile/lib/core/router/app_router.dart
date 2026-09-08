@@ -8,6 +8,9 @@ import '../../features/financial/presentation/screens/add_transaction_screen.dar
 import '../../features/financial/presentation/screens/transactions_timeline_screen.dart';
 import '../../features/analytics/presentation/screens/analytics_screen.dart';
 import '../../features/analytics/presentation/screens/transaction_search_screen.dart';
+import '../../features/planning/presentation/screens/budgets_screen.dart';
+import '../../features/planning/presentation/screens/bills_screen.dart';
+import '../../features/planning/presentation/screens/goals_screen.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 
@@ -46,6 +49,18 @@ final appRouter = GoRouter(
     GoRoute(
       path: '/search',
       builder: (context, state) => const TransactionSearchScreen(),
+    ),
+    GoRoute(
+      path: '/budgets',
+      builder: (context, state) => const BudgetsScreen(),
+    ),
+    GoRoute(
+      path: '/bills',
+      builder: (context, state) => const BillsScreen(),
+    ),
+    GoRoute(
+      path: '/goals',
+      builder: (context, state) => const GoalsScreen(),
     ),
   ],
 );

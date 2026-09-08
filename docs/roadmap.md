@@ -5,7 +5,7 @@
 | **Phase 1** | **Foundation** | **PASSED** | Monorepo layout, docs, NestJS API, PostgreSQL Prisma schema, Redis, Flutter M3 app shell. |
 | **Phase 2** | Authentication | **PASSED** | Auth API, JWT access/refresh tokens, sessions, profile, email verification. |
 | **Phase 3** | Financial Core | **PASSED** | Accounts, Income, Expense, Transfer ledger engine, timeline, balance calculation. |
-| **Phase 4** | Dashboard & Analytics | NOT STARTED | Dashboard cards, cash flow charts, structured search, filters, reports. |
+| **Phase 4** | Dashboard & Analytics | **PASSED** | Dashboard cards, cash flow charts, structured search, filters, reports. |
 | **Phase 5** | Budgets / Bills / Goals | NOT STARTED | Monthly/weekly budgets, alerts, bill calendar, recurring transactions, savings goals. |
 | **Phase 6** | Import & Offline | NOT STARTED | CSV/Excel import, Drift SQLite offline DB, sync engine, conflict resolution. |
 | **Phase 7** | Financial API Connections | NOT STARTED | Provider abstraction, bank account sync, webhooks, rate limiting. |
