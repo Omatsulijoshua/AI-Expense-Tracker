@@ -15,5 +15,5 @@
 | **Phase 11** | Advanced AI | **PASSED** | Anomaly & outlier detector, recurring subscriptions engine, 30-day balance forecast chart & Financial Health Score (0-100). |
 | **Phase 12** | Debt + Net Worth + Business | **PASSED** | Debts tracker (I_OWE / OWED_TO_ME), repayment logs, Assets vs Liabilities net worth engine, business workspace team roles. |
 | **Phase 13** | Admin Dashboard | **PASSED** | Admin UI, user management, provider health, AI cost metrics, audit logs. |
-| **Phase 14** | Security + Hardening | NOT STARTED | Security audit, rate limiting, RBAC checks, backup strategy. |
+| **Phase 14** | Security + Hardening | **PASSED** | Security audit, rate limiting, RBAC checks, backup strategy. |
 | **Phase 15** | Production QA & Deploy | NOT STARTED | End-to-end multi-platform QA, deployment scripts, monitoring. |

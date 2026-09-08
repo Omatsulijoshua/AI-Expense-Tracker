@@ -19,6 +19,7 @@ import { AiAssistantModule } from './ai-assistant/ai-assistant.module';
 import { AiAdvancedModule } from './ai-advanced/ai-advanced.module';
 import { BusinessDebtModule } from './business-debt/business-debt.module';
 import { AdminModule } from './admin/admin.module';
+import { SecurityModule } from './security/security.module';
 import { PrismaModule } from './prisma/prisma.module';
 
 @Module({
@@ -47,6 +48,7 @@ import { PrismaModule } from './prisma/prisma.module';
     AiAdvancedModule,
     BusinessDebtModule,
     AdminModule,
+    SecurityModule,
   ],
 })
 export class AppModule {}
