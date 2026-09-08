@@ -17,6 +17,7 @@ import { DocumentsModule } from './documents/documents.module';
 import { VoiceModule } from './voice/voice.module';
 import { AiAssistantModule } from './ai-assistant/ai-assistant.module';
 import { AiAdvancedModule } from './ai-advanced/ai-advanced.module';
+import { BusinessDebtModule } from './business-debt/business-debt.module';
 import { PrismaModule } from './prisma/prisma.module';
 
 @Module({
@@ -43,6 +44,7 @@ import { PrismaModule } from './prisma/prisma.module';
     VoiceModule,
     AiAssistantModule,
     AiAdvancedModule,
+    BusinessDebtModule,
   ],
 })
 export class AppModule {}

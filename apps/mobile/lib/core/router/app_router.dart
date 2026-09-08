@@ -18,6 +18,8 @@ import '../../features/documents/presentation/screens/document_vault_screen.dart
 import '../../features/voice/presentation/screens/voice_entry_screen.dart';
 import '../../features/ai_assistant/presentation/screens/ai_assistant_screen.dart';
 import '../../features/ai_advanced/presentation/screens/advanced_ai_screen.dart';
+import '../../features/business_debt/presentation/screens/debts_screen.dart';
+import '../../features/business_debt/presentation/screens/business_workspace_screen.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 
@@ -96,6 +98,14 @@ final appRouter = GoRouter(
     GoRoute(
       path: '/advanced-ai',
       builder: (context, state) => const AdvancedAiScreen(),
+    ),
+    GoRoute(
+      path: '/debts',
+      builder: (context, state) => const DebtsScreen(),
+    ),
+    GoRoute(
+      path: '/workspace',
+      builder: (context, state) => const BusinessWorkspaceScreen(),
     ),
   ],
 );
