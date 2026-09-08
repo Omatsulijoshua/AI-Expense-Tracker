@@ -34,6 +34,16 @@ export class TransactionsController {
     return this.transactionsService.getTimeline(user.id, query);
   }
 
+  @Post('sync')
+  @ApiOperation({ summary: 'Batch sync offline client-queued transaction changes' })
+  async syncTransactions(
+    @CurrentUser() user: AuthUserContext,
+    @Body() body: { items: Array<{ clientTempId: string; action: 'CREATE' | 'DELETE'; data?: any }> },
+  ) {
+    const workspaceId = user.workspaceId || user.id;
+    return this.transactionsService.syncTransactions(user.id, workspaceId, body.items || []);
+  }
+
   @Delete(':id')
   @ApiOperation({ summary: 'Delete transaction and revert account balance' })
   async deleteTransaction(@CurrentUser() user: AuthUserContext, @Param('id') transactionId: string) {

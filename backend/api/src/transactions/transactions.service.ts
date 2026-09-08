@@ -232,4 +232,45 @@ export class TransactionsService {
       return { message: 'Transaction deleted successfully' };
     });
   }
+
+  async syncTransactions(userId: string, workspaceId: string, items: Array<{ clientTempId: string; action: 'CREATE' | 'DELETE'; data?: any }>) {
+    const results: Array<{ clientTempId: string; status: 'SUCCESS' | 'ERROR'; serverId?: string; error?: string }> = [];
+
+    for (const item of items) {
+      try {
+        if (item.action === 'CREATE' && item.data) {
+          const res = await this.createTransaction(userId, workspaceId, item.data);
+          results.push({
+            clientTempId: item.clientTempId,
+            status: 'SUCCESS',
+            serverId: res.transaction.id,
+          });
+        } else if (item.action === 'DELETE' && item.data?.id) {
+          await this.deleteTransaction(userId, item.data.id);
+          results.push({
+            clientTempId: item.clientTempId,
+            status: 'SUCCESS',
+          });
+        } else {
+          results.push({
+            clientTempId: item.clientTempId,
+            status: 'ERROR',
+            error: 'Unknown sync action or missing payload',
+          });
+        }
+      } catch (err: any) {
+        results.push({
+          clientTempId: item.clientTempId,
+          status: 'ERROR',
+          error: err.message || 'Sync failed',
+        });
+      }
+    }
+
+    return {
+      totalProcessed: results.length,
+      successCount: results.filter((r) => r.status === 'SUCCESS').length,
+      results,
+    };
+  }
 }

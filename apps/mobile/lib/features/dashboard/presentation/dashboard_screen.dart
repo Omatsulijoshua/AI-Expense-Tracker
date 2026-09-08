@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../financial/presentation/providers/financial_providers.dart';
+import '../../../core/sync/sync_status_badge.dart';
 
 class DashboardScreen extends ConsumerWidget {
   const DashboardScreen({super.key});
@@ -16,6 +17,11 @@ class DashboardScreen extends ConsumerWidget {
       appBar: AppBar(
         title: const Text('Expense Tracker'),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.file_upload_outlined),
+            tooltip: 'Import CSV',
+            onPressed: () => context.push('/import'),
+          ),
           IconButton(
             icon: const Icon(Icons.search),
             onPressed: () => context.push('/search'),
@@ -35,11 +41,15 @@ class DashboardScreen extends ConsumerWidget {
           const SizedBox(width: 8),
         ],
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+      body: Column(
+        children: [
+          const SyncStatusBadge(),
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
             // Net Worth Overview Card
             Card(
               color: theme.colorScheme.primaryContainer,
@@ -97,8 +107,8 @@ class DashboardScreen extends ConsumerWidget {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 _buildActionButton(theme, icon: Icons.add, label: 'Add Entry', onTap: () => context.push('/add-transaction')),
+                _buildActionButton(theme, icon: Icons.file_upload_outlined, label: 'Import CSV', onTap: () => context.push('/import')),
                 _buildActionButton(theme, icon: Icons.analytics_outlined, label: 'Analytics', onTap: () => context.push('/analytics')),
-                _buildActionButton(theme, icon: Icons.search, label: 'Search', onTap: () => context.push('/search')),
                 _buildActionButton(theme, icon: Icons.account_balance, label: 'Accounts', onTap: () => context.push('/accounts')),
               ],
             ),
@@ -186,6 +196,9 @@ class DashboardScreen extends ConsumerWidget {
           ],
         ),
       ),
+    ),
+  ],
+),
     );
   }
 

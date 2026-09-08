@@ -11,6 +11,7 @@ import '../../features/analytics/presentation/screens/transaction_search_screen.
 import '../../features/planning/presentation/screens/budgets_screen.dart';
 import '../../features/planning/presentation/screens/bills_screen.dart';
 import '../../features/planning/presentation/screens/goals_screen.dart';
+import '../../features/import/presentation/screens/import_screen.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 
@@ -61,6 +62,10 @@ final appRouter = GoRouter(
     GoRoute(
       path: '/goals',
       builder: (context, state) => const GoalsScreen(),
+    ),
+    GoRoute(
+      path: '/import',
+      builder: (context, state) => const ImportScreen(),
     ),
   ],
 );
