@@ -1,0 +1,75 @@
+name: AI Expense Tracker CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  backend-test-and-build:
+    name: Backend API Gateway — Test & Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: backend/api/package-lock.json
+
+      - name: Install Dependencies
+        run: |
+          cd backend/api
+          npm ci
+
+      - name: Generate Prisma Client
+        run: |
+          cd backend/api
+          npx prisma generate
+
+      - name: Run NestJS Unit Tests
+        run: |
+          cd backend/api
+          npm test
+
+      - name: Verify NestJS Build Compilation
+        run: |
+          cd backend/api
+          npm run build
+
+  flutter-static-analysis:
+    name: Flutter Mobile App — Static Analysis
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Flutter SDK
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+
+      - name: Install Dependencies
+        run: |
+          cd apps/mobile
+          flutter pub get
+
+      - name: Run Flutter Static Analysis
+        run: |
+          cd apps/mobile
+          flutter analyze
+
+  web-admin-build:
+    name: Web Admin Console — Production Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Build Web Admin Bundle
+        run: |
+          cd apps/admin
+          npm run build
