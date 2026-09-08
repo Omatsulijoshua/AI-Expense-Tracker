@@ -4,9 +4,9 @@
   "description": "Expense Tracker Web Admin Dashboard Scaffold",
   "private": true,
   "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview"
+    "dev": "npx vite",
+    "build": "npx tsc && npx vite build",
+    "preview": "npx vite preview"
   },
   "dependencies": {},
   "devDependencies": {
