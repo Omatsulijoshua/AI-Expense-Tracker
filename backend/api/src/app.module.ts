@@ -14,6 +14,7 @@ import { NotificationsModule } from './notifications/notifications.module';
 import { ImportsModule } from './imports/imports.module';
 import { IntegrationsModule } from './integrations/integrations.module';
 import { DocumentsModule } from './documents/documents.module';
+import { VoiceModule } from './voice/voice.module';
 import { PrismaModule } from './prisma/prisma.module';
 
 @Module({
@@ -37,6 +38,7 @@ import { PrismaModule } from './prisma/prisma.module';
     ImportsModule,
     IntegrationsModule,
     DocumentsModule,
+    VoiceModule,
   ],
 })
 export class AppModule {}

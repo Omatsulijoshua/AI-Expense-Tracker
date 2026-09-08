@@ -18,6 +18,11 @@ class DashboardScreen extends ConsumerWidget {
         title: const Text('Expense Tracker'),
         actions: [
           IconButton(
+            icon: const Icon(Icons.mic),
+            tooltip: 'Voice Entry',
+            onPressed: () => context.push('/voice-entry'),
+          ),
+          IconButton(
             icon: const Icon(Icons.qr_code_scanner),
             tooltip: 'Scan Receipt',
             onPressed: () => context.push('/receipt-scan'),
@@ -209,6 +214,11 @@ class DashboardScreen extends ConsumerWidget {
     ),
   ],
 ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => context.push('/voice-entry'),
+        icon: const Icon(Icons.mic),
+        label: const Text('Voice Entry'),
+      ),
     );
   }
 

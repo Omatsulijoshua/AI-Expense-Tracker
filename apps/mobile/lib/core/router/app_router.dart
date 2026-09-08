@@ -15,6 +15,7 @@ import '../../features/import/presentation/screens/import_screen.dart';
 import '../../features/integrations/presentation/screens/bank_connections_screen.dart';
 import '../../features/documents/presentation/screens/receipt_scan_screen.dart';
 import '../../features/documents/presentation/screens/document_vault_screen.dart';
+import '../../features/voice/presentation/screens/voice_entry_screen.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 
@@ -81,6 +82,10 @@ final appRouter = GoRouter(
     GoRoute(
       path: '/documents',
       builder: (context, state) => const DocumentVaultScreen(),
+    ),
+    GoRoute(
+      path: '/voice-entry',
+      builder: (context, state) => const VoiceEntryScreen(),
     ),
   ],
 );

@@ -10,7 +10,7 @@
 | **Phase 6** | Import & Offline | **PASSED** | Statement CSV import, dynamic column mapper, duplicate detection engine, offline queue & background sync. |
 | **Phase 7** | Financial API Connections | **PASSED** | Provider abstraction layer, mock/sandbox bank adapters, token exchange, webhook engine, manual & background bank sync. |
 | **Phase 8** | Receipt / Document AI | **PASSED** | Vision OCR pipeline, receipt analysis, confirmation UI, document vault repository. |
-| **Phase 9** | Voice Entry | NOT STARTED | Speech-to-text, transaction intent extraction, voice income/expense/transfer. |
+| **Phase 9** | Voice Entry | **PASSED** | Speech-to-text, natural language transaction intent extraction, voice confirmation UI & assistant. |
 | **Phase 10** | AI Financial Assistant | NOT STARTED | Natural language chat, backend tool calling, financial querying. |
 | **Phase 11** | Advanced AI | NOT STARTED | Anomaly detection, subscription detection, forecasting, health score. |
 | **Phase 12** | Debt + Net Worth + Business | NOT STARTED | Assets, liabilities, debt repayment, business mode, shared workspace roles. |
