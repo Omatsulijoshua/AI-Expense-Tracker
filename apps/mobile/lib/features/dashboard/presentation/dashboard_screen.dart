@@ -1,23 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import '../../financial/presentation/providers/financial_providers.dart';
 
-class DashboardScreen extends StatelessWidget {
+class DashboardScreen extends ConsumerWidget {
   const DashboardScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final overviewAsync = ref.watch(accountsOverviewProvider);
+    final timelineAsync = ref.watch(timelineProvider);
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Expense Tracker'),
         actions: [
           IconButton(
-            icon: const Icon(Icons.notifications_outlined),
-            onPressed: () {},
+            icon: const Icon(Icons.account_balance_outlined),
+            onPressed: () => context.push('/accounts'),
           ),
           IconButton(
-            icon: const Icon(Icons.account_circle_outlined),
-            onPressed: () {},
+            icon: const Icon(Icons.history),
+            onPressed: () => context.push('/timeline'),
           ),
           const SizedBox(width: 8),
         ],
@@ -27,7 +32,7 @@ class DashboardScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Net Worth / Total Balance Overview Card
+            // Net Worth Overview Card
             Card(
               color: theme.colorScheme.primaryContainer,
               child: Padding(
@@ -42,11 +47,15 @@ class DashboardScreen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 8),
-                    Text(
-                      '₦0.00',
-                      style: theme.textTheme.headlineLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: theme.colorScheme.onPrimaryContainer,
+                    overviewAsync.when(
+                      loading: () => const Text('₦...', style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
+                      error: (e, s) => const Text('₦0.00', style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
+                      data: (overview) => Text(
+                        '₦${overview.netWorth.toStringAsFixed(2)}',
+                        style: theme.textTheme.headlineLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: theme.colorScheme.onPrimaryContainer,
+                        ),
                       ),
                     ),
                     const SizedBox(height: 16),
@@ -54,18 +63,13 @@ class DashboardScreen extends StatelessWidget {
                       children: [
                         _buildBalancePill(
                           theme,
-                          label: 'Inflow',
-                          amount: '₦0.00',
-                          icon: Icons.arrow_downward,
-                          iconColor: Colors.green,
-                        ),
-                        const SizedBox(width: 12),
-                        _buildBalancePill(
-                          theme,
-                          label: 'Outflow',
-                          amount: '₦0.00',
-                          icon: Icons.arrow_upward,
-                          iconColor: Colors.red,
+                          label: 'Accounts',
+                          amount: overviewAsync.maybeWhen(
+                            data: (o) => '${o.count}',
+                            orElse: () => '0',
+                          ),
+                          icon: Icons.account_balance,
+                          iconColor: Colors.blue,
                         ),
                       ],
                     ),
@@ -84,32 +88,82 @@ class DashboardScreen extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _buildActionButton(theme, icon: Icons.add, label: 'Add Entry'),
-                _buildActionButton(theme, icon: Icons.qr_code_scanner, label: 'Scan Receipt'),
-                _buildActionButton(theme, icon: Icons.mic, label: 'Voice'),
-                _buildActionButton(theme, icon: Icons.swap_horiz, label: 'Transfer'),
+                _buildActionButton(theme, icon: Icons.add, label: 'Add Entry', onTap: () => context.push('/add-transaction')),
+                _buildActionButton(theme, icon: Icons.account_balance, label: 'Accounts', onTap: () => context.push('/accounts')),
+                _buildActionButton(theme, icon: Icons.history, label: 'Timeline', onTap: () => context.push('/timeline')),
+                _buildActionButton(theme, icon: Icons.swap_horiz, label: 'Transfer', onTap: () => context.push('/add-transaction')),
               ],
             ),
             const SizedBox(height: 24),
-            Text(
-              'Recent Activity',
-              style: theme.textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Recent Activity',
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                TextButton(
+                  onPressed: () => context.push('/timeline'),
+                  child: const Text('See All'),
+                ),
+              ],
             ),
-            const SizedBox(height: 12),
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(24.0),
-                child: Center(
-                  child: Text(
-                    'No transactions recorded yet.',
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.colorScheme.onSurfaceVariant,
-                    ),
+            const SizedBox(height: 8),
+            timelineAsync.when(
+              loading: () => const Center(child: CircularProgressIndicator()),
+              error: (e, s) => Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(24.0),
+                  child: Center(
+                    child: Text('No transactions recorded yet.', style: theme.textTheme.bodyMedium),
                   ),
                 ),
               ),
+              data: (txList) {
+                if (txList.isEmpty) {
+                  return Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(24.0),
+                      child: Center(
+                        child: Text('No transactions recorded yet.', style: theme.textTheme.bodyMedium),
+                      ),
+                    ),
+                  );
+                }
+
+                return ListView.separated(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: txList.take(5).length,
+                  separatorBuilder: (ctx, i) => const SizedBox(height: 8),
+                  itemBuilder: (ctx, i) {
+                    final tx = txList[i];
+                    final isExpense = tx.type == 'EXPENSE';
+                    return Card(
+                      child: ListTile(
+                        leading: CircleAvatar(
+                          backgroundColor: isExpense ? Colors.red.shade100 : Colors.green.shade100,
+                          child: Icon(
+                            isExpense ? Icons.arrow_upward : Icons.arrow_downward,
+                            color: isExpense ? Colors.red : Colors.green,
+                          ),
+                        ),
+                        title: Text(tx.merchant ?? tx.description ?? 'Transaction', style: const TextStyle(fontWeight: FontWeight.bold)),
+                        subtitle: Text(tx.accountName ?? 'Account'),
+                        trailing: Text(
+                          '${isExpense ? '-' : '+'}₦${tx.amount.toStringAsFixed(2)}',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: isExpense ? Colors.red : Colors.green,
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                );
+              },
             ),
           ],
         ),
@@ -150,12 +204,13 @@ class DashboardScreen extends StatelessWidget {
     ThemeData theme, {
     required IconData icon,
     required String label,
+    required VoidCallback onTap,
   }) {
     return Column(
       children: [
         IconButton.filledTonal(
           icon: Icon(icon),
-          onPressed: () {},
+          onPressed: onTap,
         ),
         const SizedBox(height: 4),
         Text(
