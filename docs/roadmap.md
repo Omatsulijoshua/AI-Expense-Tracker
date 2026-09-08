@@ -12,7 +12,7 @@
 | **Phase 8** | Receipt / Document AI | **PASSED** | Vision OCR pipeline, receipt analysis, confirmation UI, document vault repository. |
 | **Phase 9** | Voice Entry | **PASSED** | Speech-to-text, natural language transaction intent extraction, voice confirmation UI & assistant. |
 | **Phase 10** | AI Financial Assistant | **PASSED** | Conversational chat advisor, backend tool calling (net worth, spending, bills, budgets), interactive evidence UI. |
-| **Phase 11** | Advanced AI | NOT STARTED | Anomaly detection, subscription detection, forecasting, health score. |
+| **Phase 11** | Advanced AI | **PASSED** | Anomaly & outlier detector, recurring subscriptions engine, 30-day balance forecast chart & Financial Health Score (0-100). |
 | **Phase 12** | Debt + Net Worth + Business | NOT STARTED | Assets, liabilities, debt repayment, business mode, shared workspace roles. |
 | **Phase 13** | Admin Dashboard | NOT STARTED | Admin UI, user management, provider health, AI cost metrics, audit logs. |
 | **Phase 14** | Security + Hardening | NOT STARTED | Security audit, rate limiting, RBAC checks, backup strategy. |

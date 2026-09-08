@@ -17,6 +17,7 @@ import '../../features/documents/presentation/screens/receipt_scan_screen.dart';
 import '../../features/documents/presentation/screens/document_vault_screen.dart';
 import '../../features/voice/presentation/screens/voice_entry_screen.dart';
 import '../../features/ai_assistant/presentation/screens/ai_assistant_screen.dart';
+import '../../features/ai_advanced/presentation/screens/advanced_ai_screen.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 
@@ -91,6 +92,10 @@ final appRouter = GoRouter(
     GoRoute(
       path: '/ai-assistant',
       builder: (context, state) => const AiAssistantScreen(),
+    ),
+    GoRoute(
+      path: '/advanced-ai',
+      builder: (context, state) => const AdvancedAiScreen(),
     ),
   ],
 );

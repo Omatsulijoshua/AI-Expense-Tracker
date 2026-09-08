@@ -16,6 +16,7 @@ import { IntegrationsModule } from './integrations/integrations.module';
 import { DocumentsModule } from './documents/documents.module';
 import { VoiceModule } from './voice/voice.module';
 import { AiAssistantModule } from './ai-assistant/ai-assistant.module';
+import { AiAdvancedModule } from './ai-advanced/ai-advanced.module';
 import { PrismaModule } from './prisma/prisma.module';
 
 @Module({
@@ -41,6 +42,7 @@ import { PrismaModule } from './prisma/prisma.module';
     DocumentsModule,
     VoiceModule,
     AiAssistantModule,
+    AiAdvancedModule,
   ],
 })
 export class AppModule {}

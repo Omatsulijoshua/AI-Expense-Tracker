@@ -18,6 +18,11 @@ class DashboardScreen extends ConsumerWidget {
         title: const Text('Expense Tracker'),
         actions: [
           IconButton(
+            icon: const Icon(Icons.psychology_outlined, color: Colors.teal),
+            tooltip: 'Advanced AI Insights',
+            onPressed: () => context.push('/advanced-ai'),
+          ),
+          IconButton(
             icon: const Icon(Icons.auto_awesome, color: Colors.amber),
             tooltip: 'AI Advisor Chat',
             onPressed: () => context.push('/ai-assistant'),
